@@ -10,52 +10,92 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_27_070633) do
+ActiveRecord::Schema.define(version: 2018_09_28_061911) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
 
   create_table "addresses", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "address"
+    t.string "suburb"
+    t.string "province"
+    t.string "postcode"
+    t.string "country"
+    t.string "address_type"
+    t.string "addressable_type"
+    t.uuid "addressable_id"
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["addressable_type", "addressable_id"], name: "index_addresses_on_addressable_type_and_addressable_id"
   end
 
   create_table "appointments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "doctor_id"
+    t.uuid "patient_id"
+    t.string "status"
+    t.datetime "date"
+    t.text "description"
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["doctor_id"], name: "index_appointments_on_doctor_id"
+    t.index ["patient_id"], name: "index_appointments_on_patient_id"
   end
 
   create_table "departments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name"
+    t.uuid "doctor_id"
+    t.uuid "hospital_id"
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["doctor_id"], name: "index_departments_on_doctor_id"
+    t.index ["hospital_id"], name: "index_departments_on_hospital_id"
   end
 
   create_table "emails", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "address", null: false
+    t.boolean "primary"
+    t.boolean "active", default: true
+    t.uuid "user_id"
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_emails_on_user_id"
   end
 
   create_table "hospitals", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name"
+    t.text "description"
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "medical_records", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "doctor_id"
+    t.uuid "patient_id"
+    t.text "illness_description"
+    t.text "doctor_solution"
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["doctor_id"], name: "index_medical_records_on_doctor_id"
+    t.index ["patient_id"], name: "index_medical_records_on_patient_id"
   end
 
   create_table "phones", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "number"
+    t.string "phone_type"
+    t.boolean "active", default: true
+    t.boolean "primary"
+    t.uuid "user_id"
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_phones_on_user_id"
   end
 
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

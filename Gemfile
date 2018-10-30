@@ -30,7 +30,7 @@ gem 'jbuilder', '~> 2.5'
 
 # authentication
 gem 'devise'
-
+gem 'bootstrap'
 # authorization
 gem 'pundit'
 
